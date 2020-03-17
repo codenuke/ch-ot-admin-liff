@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+       "types": [
+         "webpack-env",
+         "jest",
+         "liff-type"
+       ]
+    }
+}
