@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from "vue";
+import VueRouter from "vue-router";
 // import Home from '../views/Home.vue'
-import SignPad from '../views/SignPad.vue'
-import OTList from '../views/OTList.vue'
-import OTDetail from '../views/OTDetail.vue'
-
+import SignPad from "../views/SignPad.vue";
+import OTList from "../views/OTList.vue";
+import OTDetail from "../views/OTDetail.vue";
+import Init from "../views/Init.vue";
 
 // OT
 
@@ -12,45 +12,44 @@ import OTDetail from '../views/OTDetail.vue'
 
 // Approve
 
-
-
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'OTList',
-    component: OTList
+    path: "/",
+    name: "Init",
+    component: Init,
   },
   {
-    path: '/signpad/:action/:id',
-    name: 'SignPad',
-    component: SignPad
+    path: "/signpad/:action/:id",
+    name: "SignPad",
+    component: SignPad,
   },
   {
-    path: '/ot',
-    name: 'OTList',
-    component: OTList
+    path: "/ot",
+    name: "OTList",
+    component: OTList,
   },
   {
-    path: '/ot-detail/:id',
-    name: 'OTDetail',
-    component: OTDetail
+    path: "/ot-detail/:id",
+    name: "OTDetail",
+    component: OTDetail,
   },
   {
-    path: '/about',
-    name: 'About',
+    path: "/about",
+    name: "About",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;

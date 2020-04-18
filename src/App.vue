@@ -24,7 +24,16 @@
           width="100"
         /> -->
 
-        Choheng OT System
+        <template v-if="ot_employee.fname != undefined">
+          Choheng OT System : {{ `${ot_employee.fname}  ${ot_employee.lname}  `}}
+          <div v-if="ot_employee.level==2"> - [ หัวหน้ากะ ]</div>
+          <div v-if="ot_employee.level==3"> - [ ผู้ตรวจสอบ ]</div>
+          <div v-if="ot_employee.level==4"> - [ ผู้อนุมัติ ]</div>
+        </template>
+
+        <template v-else>
+          Choheng OT System
+        </template>
       </div>
 
       <!-- <v-spacer></v-spacer> -->
@@ -40,6 +49,7 @@
     </v-app-bar>
 
     <v-content>
+      <confirm ref="confirm"></confirm>
       <router-view></router-view>
     </v-content>
   </v-app>
@@ -47,14 +57,35 @@
 
 <script>
 
-export default {
-  name: 'App',
+import Confirm from '@/components/Confirm.vue'
+import {mapGetters} from 'vuex'
 
+export default  {
+
+
+  name: 'App',
   components: {
+    Confirm
   },
 
   data: () => ({
-    //
+
   }),
+  computed :{
+    ...mapGetters({
+       ot_data:      'Ot',
+       ot_employee:      'Profile',
+
+      // ot_detail: 'getOtDetail'
+    })
+  },
+  created(){
+
+    
+  },
+  mouted(){
+    this.$root.$confirm = this.$refs.confirm.open
+  }
+  
 };
 </script>
