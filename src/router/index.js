@@ -4,7 +4,6 @@ import VueRouter from "vue-router";
 import SignPad from "../views/SignPad.vue";
 import OTList from "../views/OTList.vue";
 import OTDetail from "../views/OTDetail.vue";
-import Init from "../views/Init.vue";
 
 // OT
 
@@ -17,8 +16,8 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Init",
-    component: Init,
+    name: "OTList",
+    component: OTList,
   },
   {
     path: "/signpad/:action/:id",
@@ -26,7 +25,7 @@ const routes = [
     component: SignPad,
   },
   {
-    path: "/ot",
+    path: "/list",
     name: "OTList",
     component: OTList,
   },
@@ -35,19 +34,10 @@ const routes = [
     name: "OTDetail",
     component: OTDetail,
   },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
 ];
 
 const router = new VueRouter({
-  mode: "history",
+  // mode: "history",
   base: process.env.BASE_URL,
   routes,
 });

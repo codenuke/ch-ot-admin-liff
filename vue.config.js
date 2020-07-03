@@ -1,6 +1,6 @@
 module.exports = {
-  transpileDependencies: ["vuetify"],
-  publicPath: "/line/ot",
+  transpileDependencies: ["vuetify", "vuex-persist"],
+  publicPath: "/ot",
   devServer: {
     contentBase: "/Users/nuke/CH/ot_admin_liff/dist",
     disableHostCheck: true,
@@ -9,7 +9,7 @@ module.exports = {
     proxy: {
       "^/api": {
         // target: 'https://www.iotplus.cloud/',
-        target: "https://ot.iotplus.cloud/",
+        target: "https://tmr.choheng.com/",
         // pathRewrite: { '^/api': '' },
         changeOrigin: true,
       },

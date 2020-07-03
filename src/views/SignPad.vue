@@ -44,6 +44,7 @@
   </div>
 </template>
 <script>
+/* eslint-disable no-unused-vars */
 import Vue from "vue";
 import VueSignaturePad from "vue-signature-pad";
 import axios from "axios";
@@ -68,8 +69,8 @@ export default {
     },
     save() {
       const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
-      console.log(isEmpty);
-      console.log(data);
+      // console.log(isEmpty);
+      // console.log(data);
 
       // this.closeOT()
       // this.$router.push({ path: '/ot'})
@@ -82,31 +83,31 @@ export default {
       }
     },
     cancel() {
-      this.$router.push({ path: "/ot" });
+      this.$router.push({ path: "/" });
     },
 
     closeOt(sign) {
       axios
         .post("/api/line/ot/close", { id: this.id, sign: sign })
         .then(res => {
-          console.log(res);
-          this.$router.push({ path: "/ot" });
+          // console.log(res);
+          this.$router.push({ path: "/" });
         });
     },
     approveOt(sign) {
       axios
         .post("/api/line/ot/approve", { id: this.id, sign: sign })
         .then(res => {
-          console.log(res);
-          this.$router.push({ path: "/ot" });
+          // console.log(res);
+          this.$router.push({ path: "/" });
         });
     },
     confirmOt(sign) {
       axios
         .post("/api/line/ot/confirm", { id: this.id, sign: sign })
         .then(res => {
-          console.log(res);
-          this.$router.push({ path: "/ot" });
+          // console.log(res);
+          this.$router.push({ path: "/" });
         });
     }
   }

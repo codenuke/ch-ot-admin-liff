@@ -1,12 +1,12 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <!-- <v-img
+    <v-app>
+        <v-app-bar
+            app
+            color="primary"
+            dark
+        >
+            <div class="d-flex align-center">
+                <!-- <v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
@@ -24,68 +24,106 @@
           width="100"
         /> -->
 
-        <template v-if="ot_employee.fname != undefined">
-          Choheng OT System : {{ `${ot_employee.fname}  ${ot_employee.lname}  `}}
-          <div v-if="ot_employee.level==2"> - [ หัวหน้ากะ ]</div>
-          <div v-if="ot_employee.level==3"> - [ ผู้ตรวจสอบ ]</div>
-          <div v-if="ot_employee.level==4"> - [ ผู้อนุมัติ ]</div>
-        </template>
+                <template v-if="employee.fname != undefined">
+                    Choheng OT System : {{ `${employee.fname}  ${employee.lname}  `}}
+                    <div v-if="employee.level==2"> - [ หัวหน้ากะ ]</div>
+                    <div v-if="employee.level==3"> - [ ผู้ตรวจสอบ ]</div>
+                    <div v-if="employee.level==4"> - [ ผู้อนุมัติ ]</div>
+                </template>
 
-        <template v-else>
-          Choheng OT System
-        </template>
-      </div>
+                <template v-else>
+                    Choheng OT System
+                </template>
+            </div>
 
-      <!-- <v-spacer></v-spacer> -->
+            <v-spacer></v-spacer>
 
-      <!-- <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn> -->
-    </v-app-bar>
+            <v-btn
+                text
+                @click="logout"
+            >
+                <span class="mr-2">Logout</span>
+                <v-icon>mdi-lock</v-icon>
+            </v-btn>
+        </v-app-bar>
 
-    <v-content>
-      <confirm ref="confirm"></confirm>
-      <router-view></router-view>
-    </v-content>
-  </v-app>
+        <v-content>
+            <confirm ref="confirm"></confirm>
+            <router-view></router-view>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
-
+/* eslint-disable no-unused-vars */
 import Confirm from '@/components/Confirm.vue'
-import {mapGetters} from 'vuex'
+import { mapActions, mapState } from 'vuex'
+import axios from "axios";
 
-export default  {
+export default {
 
 
-  name: 'App',
-  components: {
-    Confirm
-  },
+    name: 'App',
+    components: {
+        Confirm
+    },
 
-  data: () => ({
+    data: () => ({
 
-  }),
-  computed :{
-    ...mapGetters({
-       ot_data:      'Ot',
-       ot_employee:      'Profile',
+    }),
+    computed: {
+        ...mapState({
+            employee: 'employee',
+        })
+    },
+    created() {
+        axios.defaults.baseURL = "https://tmr.choheng.com";
 
-      // ot_detail: 'getOtDetail'
-    })
-  },
-  created(){
+        // console.log("app creeated")
+        this.$liff
+            // .init({ liffId: "1653793901-jN5Z5MYZ" }) // LineDev => OTAdmin
+            .init({ liffId: "1653837445-0yQDQKKO" }) // Choheng OT
+            .then(() => {
+                if (!this.$liff.isLoggedIn()) {
+                    this.$liff.login();
+                } else {
+                    axios.defaults.headers.common[
+                        "Authorization"
+                    ] = `Bearer ${this.$liff.getAccessToken()}`;
 
-    
-  },
-  mouted(){
-    this.$root.$confirm = this.$refs.confirm.open
-  }
-  
+                    // console.log("liff init settoken")
+                    this.setLineToken(this.$liff.getAccessToken());
+
+                    this.getOt();
+
+
+                    // Get OT
+
+                    // this.$router.push("/list");
+                }
+            })
+            .catch(err => {
+                // this.$route.push("/error");
+                // console.log(err);
+            });
+
+
+    },
+    mouted() {
+        this.$root.$confirm = this.$refs.confirm.open
+    },
+    methods: {
+        ...mapActions({
+            setLineToken: "setLineToken",
+            clearState: "clearState",
+            getOt: "getOt"
+        }),
+        logout() {
+            this.clearState();
+            this.$liff.logout();
+            window.location.reload();
+        }
+    }
+
 };
 </script>

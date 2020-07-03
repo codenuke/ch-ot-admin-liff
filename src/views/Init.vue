@@ -1,60 +1,44 @@
 <template>
-<div></div>
-    
+    <div></div>
 </template>
 
-
-<script>
+<script  lang="ts">
 import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
-    data(){
-        return {
-
-
-        }
+    data() {
+        return {};
     },
-    created(){
-        axios.defaults.baseURL = "https://ot.iotplus.cloud";
-    
-        this.$liff
-        // .init({ liffId: "1653793901-jN5Z5MYZ" }) // LineDev => OTAdmin
-        .init({ liffId: "1653837445-0yQDQKKO" })  // Choheng OT
-        .then(() => {
-            console.log("Init success");
-            if (!this.$liff.isLoggedIn()) {
-            // set `redirectUri` to redirect the user to a URL other than the front page of your LIFF app.
-            this.$liff.login();
-            } else {
-            console.log(this.$liff.getAccessToken());
+    created() {
+        axios.defaults.baseURL = "https://tmr.choheng.com";
 
-            axios.defaults.headers.common[
-                "Authorization"
-            ] = `Bearer ${this.$liff.getAccessToken()}`;
+        // this.$liff
+        //     // .init({ liffId: "1653793901-jN5Z5MYZ" }) // LineDev => OTAdmin
+        //     .init({ liffId: "1653837445-0yQDQKKO" }) // Choheng OT
+        //     .then(() => {
+        //         if (!this.$liff.isLoggedIn()) {
+        //             this.$liff.login();
+        //         } else {
+        //             axios.defaults.headers.common[
+        //                 "Authorization"
+        //             ] = `Bearer ${this.$liff.getAccessToken()}`;
 
-            console.log("Access Token " + this.$liff.getAccessToken());
+        //             this.setLineToken(this.$liff.getAccessToken());
 
-            // this.$liff
-            //   .getProfile()
-            //   .then(profile => {
-            //     console.log(profile);
-            //   })
-            //   .catch(err => console.error(err));
-
-            // this.getOt();
-
-            this.$router.push('/ot');
-
-            }
+        //             this.$router.push("/list");
+        //         }
+        //     })
+        //     .catch(err => {
+        //         // this.$route.push("/error");
+        //         console.log(err);
+        //     });
+    },
+    methods: {
+        ...mapActions({
+            setLineToken: "setLineToken"
+            // setName: 'Person/setName'
         })
-        .catch(err => {
-            console.log(err);
-        });
     }
-
-
-}
-
-
-
+};
 </script>

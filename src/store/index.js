@@ -2,57 +2,73 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import VuexPersistence from "vuex-persist";
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+});
 
 Vue.use(Vuex);
 
 const state = {
   ot: [],
-  ot_detail: [],
-  profile: [],
-  line: [],
+  employee: {},
+  line: "",
 };
 
 const mutations = {
-  SET_OT(state, ot) {
-    state.ot = ot;
+  setOt(state, payload) {
+    state.ot = payload;
   },
-  SET_PROFILE(state, profile) {
-    state.profile = profile;
+  setEmployee(state, payload) {
+    state.employee = payload;
+  },
+  setLine(state, payload) {
+    state.line = payload;
+  },
+  setStateClear(state) {
+    state.ot = [];
+    state.employee = {};
+    state.line = "";
   },
 };
 
 const actions = {
-  // getProfile({ commit, state }) {},
   getOt({ commit, state }) {
     axios
       .post("/api/line/ot")
       .then((res) => {
-        // console.log(res);
-        // state.ot = res.data.ot;
-        // state.profile = res.data.employee;
-        commit("SET_OT", res.data.ot);
-        commit("SET_PROFILE", res.data.employee);
-
-        // this.ot_employee = res.data.employee;
-        // this.ot_data = res.data.ot;
+        commit("setOt", res.data.ot);
+        commit("setEmployee", res.data.employee);
       })
       .catch((err) => {
         console.log(err);
       });
   },
-  getOtDetail() {},
+  setLineToken({ commit, state }, token) {
+    commit("setLine", token);
+  },
+  clearState({ commit, state }) {
+    commit("setStateClear");
+  },
 };
 
 const getters = {
   Ot(state) {
     return state.ot;
   },
-  Profile() {
-    return state.profile;
+  Employee() {
+    return state.employee;
   },
-  OtDetail() {
-    return state.ot_detail;
+  Line() {
+    return state.line;
   },
 };
 
-export default new Vuex.Store({ state, mutations, actions, getters });
+export default new Vuex.Store({
+  state,
+  mutations,
+  actions,
+  getters,
+  plugins: [vuexLocal.plugin],
+});

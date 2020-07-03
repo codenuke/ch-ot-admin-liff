@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="ot_loaded == true">
     <v-data-table
       :headers="headers"
       :items="ot_detail"
@@ -13,10 +13,17 @@
         {{ item.pname + item.fname + " " + item.lname }}
       </template>
 
+      <template v-slot:item.created_at="{ item }">
+          {{
+          getMomentDateFormat(item.updated_at, "YYYY-MM-DD HH:mm:ss").format( "DD-MM-YYYY HH:mm")
+          }}
+      </template>
+
+
       <template v-slot:item.updated_at="{ item }">
         <template v-if="item.created_at == item.updated_at">-</template>
         <template v-else>
-          {{ item.updated_at }}
+          {{ getMomentDateFormat(item.updated_at, "YYYY-MM-DD HH:mm:ss").format( "DD-MM-YYYY HH:mm") }}
         </template>
       </template>
 
@@ -26,8 +33,16 @@
         </template>
         <template v-if="item.ot_hour != 0 && item.flag != -1">
           {{ item.ot_hour }}
-          <v-chip v-if="item.ot_cause==1" class="ma-2" color="primary">เหมา</v-chip>
-          <v-chip v-if="item.ot_cause==2" class="ma-2" color="primary">เจรจาพิเศษ</v-chip>
+          <v-chip v-if="item.ot_cause == 1" class="ma-2" color="primary"
+            >เหมา</v-chip
+          >
+          <v-chip v-if="item.ot_cause == 2" class="ma-2" color="primary"
+            >เจรจาพิเศษ</v-chip
+          >
+
+          <v-chip v-if="item.off_day == 1" class="ma-2" color="error"
+            >วันหยุด</v-chip
+          >
         </template>
 
         <template v-if="item.flag == -1">
@@ -63,7 +78,11 @@
                 dark
                 color="primary"
                 class="ma-2"
-                v-if="item.ot_cause != 0 && item.ot_cause != null && item.ot_hour != 0"
+                v-if="
+                  item.ot_cause != 0 &&
+                    item.ot_cause != null &&
+                    item.ot_hour != 0
+                "
                 @click="changeWorkHour(item)"
               >
                 <v-icon>mdi-content-save</v-icon>
@@ -171,23 +190,33 @@
       </v-card>
     </v-dialog>
   </div>
+  <div v-else>
+    กำลังโหลดข้อมูล...
+  </div>
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
 import axios from "axios";
 import moment from "moment";
+import {  mapState } from "vuex"
 
 export default {
   created() {
-    axios.defaults.baseURL = "https://ot.iotplus.cloud";
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${this.$liff.getAccessToken()}`;
-
+     axios.defaults.baseURL = "https://tmr.choheng.com";
+        axios.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${this.line_access_token}`
     this.loadDetail();
+  },
+  computed : {
+    ...mapState({
+            line_access_token: "line"
+        })
   },
   data() {
     return {
+      ot_loaded: false,
       snackbar: false,
       text: "",
       color: "success",
@@ -196,25 +225,30 @@ export default {
       pageCount: 0,
       itemsPerPage: 15,
       headers: [
+        { text: "ลำดับ", value: "id" , sortable :false },
         {
           text: "เข้างาน",
           align: "start",
           sortable: false,
-          value: "created_at"
+          value: "created_at",
         },
         {
           text: "ออกงาน",
           align: "start",
           sortable: false,
-          value: "updated_at"
+          value: "updated_at",
         },
-        { text: "ชั่วโมงทำงาน", value: "hour" },
-        { text: "รหัสพนักงาน", value: "code" },
-        { text: "พนักงาน", value: "employee" },
-        { text: "เมนู", value: "action" }
+        { text: "ชั่วโมงทำงาน", value: "hour" , sortable :false },
+        { text: "สถานที่", value: "department" , sortable :false },
+        { text: "รหัสพนักงาน", value: "code" , sortable :false },
+        { text: "พนักงาน", value: "employee" , sortable :false },
+        { text: "เมนู", value: "action" , sortable :false },
       ],
-      ot_cause: [ { "key": 1 , "value" : "เหมา" } , {"key": 2, "value" : "เจรจาพิเศษ"}],
-       ot_detail: [],
+      ot_cause: [
+        { key: 1, value: "เหมา" },
+        { key: 2, value: "เจรจาพิเศษ" },
+      ],
+      ot_detail: [],
       ot_employee: [],
       ot: [],
       dialog: false,
@@ -225,22 +259,29 @@ export default {
       options: {
         color: "primary",
         width: 290,
-        zIndex: 200
-      }
+        zIndex: 200,
+      },
     };
   },
   methods: {
     loadDetail() {
       axios
         .post("/api/line/ot/detail", { id: this.$route.params.id })
-        .then(res => {
-          console.log(res);
+        .then((res) => {
+          // console.log(res);
           this.ot_employee = res.data.employee;
           this.ot = res.data.ot;
           this.ot_detail = res.data.detail;
+          this.ot_loaded = true;
+
+          let i = 1 
+          this.ot_detail.map(n => {
+            n['id'] = i
+            i++
+          })
         })
-        .catch(err => {
-          console.log(err);
+        .catch((err) => {
+          // console.log(err);
         });
     },
     goBack() {
@@ -252,30 +293,30 @@ export default {
           "ยืนยันการลบข้อมูลการทำงาน",
           item.code + " : " + item.pname + item.fname + " " + item.lname,
           {
-            color: "red"
+            color: "red",
           }
         )
       ) {
-        console.log("confirm");
+        // console.log("confirm");
         axios
           .post("/api/line/ot/detail/delete", { id: item.id })
-          .then(res => {
-            console.log(res);
+          .then((res) => {
+            // console.log(res);
             this.showSnack("ลบการทำงานสำเร็จ", "success");
             this.ot_detail = this.arrayRemove(this.ot_detail, item);
             // this.ot_detail.
             // this.loadDetail();
           })
-          .catch(err => {
+          .catch((err) => {
             this.showSnack("ลบการทำงานผิดพลาด", "error");
-            console.log(err);
+            // console.log(err);
           });
       } else {
-        console.log("cancel");
+        // console.log("cancel");
       }
     },
     getWorkHour(item) {
-      console.log(moment(item.created_at, "YYYY-MM-DD HH:mm:ss"));
+      // console.log(moment(item.created_at, "YYYY-MM-DD HH:mm:ss"));
 
       return moment(item.created_at);
     },
@@ -284,16 +325,16 @@ export default {
         .post("/api/line/ot/detail/changehour", {
           id: item.id,
           hour: item.ot_hour,
-          cause: item.ot_cause
+          cause: item.ot_cause,
         })
-        .then(res => {
-          console.log(res);
+        .then((res) => {
+          // console.log(res);
           item.flag = 1;
           this.showSnack("เปลี่ยนชั่วโมงทำงานสำเร็จ", "success");
         })
-        .catch(err => {
+        .catch((err) => {
           this.showSnack("เปลี่ยนชั่วโมงทำงานผิดพลาด", "error");
-          console.log(err);
+          // console.log(err);
         });
     },
     arrayRemove(arr, value) {
@@ -323,7 +364,11 @@ export default {
     cancel() {
       this.resolve(false);
       this.dialog = false;
-    }
-  }
+    },
+    getMomentDateFormat(mdate, format) {
+            var dtm = moment(mdate, format);
+            return dtm;
+    },
+  },
 };
 </script>
