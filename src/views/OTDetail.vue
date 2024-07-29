@@ -15,7 +15,7 @@
 
       <template v-slot:item.created_at="{ item }">
           {{
-          getMomentDateFormat(item.updated_at, "YYYY-MM-DD HH:mm:ss").format( "DD-MM-YYYY HH:mm")
+          getMomentDateFormat(item.created_at, "YYYY-MM-DD HH:mm:ss").format( "DD-MM-YYYY HH:mm")
           }}
       </template>
 
@@ -225,7 +225,7 @@ export default {
       pageCount: 0,
       itemsPerPage: 15,
       headers: [
-        { text: "ลำดับ", value: "id" , sortable :false },
+        { text: "ลำดับ", value: "seq" , sortable :false },
         {
           text: "เข้างาน",
           align: "start",
@@ -276,7 +276,7 @@ export default {
 
           let i = 1 
           this.ot_detail.map(n => {
-            n['id'] = i
+            n['seq'] = i
             i++
           })
         })

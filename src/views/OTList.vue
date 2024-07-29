@@ -104,6 +104,7 @@
                     color="green"
                     text-color="white"
                 >อนุมัติเรียบร้อย</v-chip>
+
             </template>
 
             <template v-slot:item.shift="{ item }">
@@ -147,6 +148,19 @@
             </template>
 
             <template v-slot:item.action="{ item }">
+
+                <v-chip
+                    color="green"
+                    text-color="white"
+                    @click="downloadPDF(item.id)"
+                >PDF</v-chip>
+
+                <v-chip
+                    color="green"
+                    text-color="white"
+                    @click="downloadPDFSign(item.id)"
+                >ลายเซ็นต์</v-chip>
+
                 <router-link :to="{ path: 'ot-detail/' + item.id }">
                     <v-btn
                         v-if="item"
@@ -304,6 +318,48 @@ export default {
         getMomentDateFormat(mdate, format) {
             var dtm = moment(mdate, format);
             return dtm;
+        },
+        downloadPDF(otid) {
+            axios
+                .post("/api/line/ot/pdf", {
+                    id: otid,
+                },{ responseType: 'blob' })
+                .then(res => {
+                    var fileURL = window.URL.createObjectURL(new Blob([res.data]));
+                    var fileLink = document.createElement('a');
+                
+                    fileLink.href = fileURL;
+                    fileLink.setAttribute('download', 'ot_'+ otid +'.pdf');
+                    document.body.appendChild(fileLink);
+                
+                    fileLink.click();
+
+                })
+                .catch(err => {
+                    // console.log(err);
+                    this.showSnack("ไม่สามารถดาวน์โหลดข้อมูล PDF", "error");
+                });
+        },
+        downloadPDFSign(otid) {
+            axios
+                .post("/api/line/ot/pdfsign", {
+                    id: otid,
+                },{ responseType: 'blob' })
+                .then(res => {
+                    var fileURL = window.URL.createObjectURL(new Blob([res.data]));
+                    var fileLink = document.createElement('a');
+                
+                    fileLink.href = fileURL;
+                    fileLink.setAttribute('download', 'otsign_'+ otid +'.pdf');
+                    document.body.appendChild(fileLink);
+                
+                    fileLink.click();
+
+                })
+                .catch(err => {
+                    // console.log(err);
+                    this.showSnack("ไม่สามารถดาวน์โหลดข้อมูล PDF", "error");
+                });
         },
         updateShift(item, shift) {
             // console.log(item.id);
