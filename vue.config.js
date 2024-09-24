@@ -1,6 +1,6 @@
 module.exports = {
   transpileDependencies: ["vuetify", "vuex-persist"],
-  publicPath: "/ot",
+  publicPath: "/",
   devServer: {
     contentBase: "/Users/nuke/CH/ot_admin_liff/dist",
     disableHostCheck: true,
