@@ -104,7 +104,7 @@ export default {
             })
             .catch(err => {
                 // this.$route.push("/error");
-                // console.log(err);
+                console.log(err);
             });
 
 

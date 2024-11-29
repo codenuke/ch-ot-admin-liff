@@ -1,15 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Home from '../views/Home.vue'
 import SignPad from "../views/SignPad.vue";
 import OTList from "../views/OTList.vue";
 import OTDetail from "../views/OTDetail.vue";
 
-// OT
-
-// OT Verify Detail Show user in list
-
-// Approve
 
 Vue.use(VueRouter);
 
@@ -37,7 +31,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  // mode: "history",
+  mode: "history",
   base: process.env.BASE_URL,
   routes,
 });

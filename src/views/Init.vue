@@ -13,26 +13,29 @@ export default {
     created() {
         axios.defaults.baseURL = "https://tmr.choheng.com";
 
-        // this.$liff
-        //     // .init({ liffId: "1653793901-jN5Z5MYZ" }) // LineDev => OTAdmin
-        //     .init({ liffId: "1653837445-0yQDQKKO" }) // Choheng OT
-        //     .then(() => {
-        //         if (!this.$liff.isLoggedIn()) {
-        //             this.$liff.login();
-        //         } else {
-        //             axios.defaults.headers.common[
-        //                 "Authorization"
-        //             ] = `Bearer ${this.$liff.getAccessToken()}`;
+        this.$liff
+            // .init({ liffId: "1653793901-jN5Z5MYZ" }) // LineDev => OTAdmin
+            .init({ liffId: "1653837445-0yQDQKKO" }) // Choheng OT
+            .then(() => {
 
-        //             this.setLineToken(this.$liff.getAccessToken());
+                if (!this.$liff.isLoggedIn()) {
+                    console.log("Not login");
+                    this.$liff.login();
+                } else {
+                    console.log("Login token : ", this.$liff.getAccessToken());
+                    axios.defaults.headers.common[
+                        "Authorization"
+                    ] = `Bearer ${this.$liff.getAccessToken()}`;
 
-        //             this.$router.push("/list");
-        //         }
-        //     })
-        //     .catch(err => {
-        //         // this.$route.push("/error");
-        //         console.log(err);
-        //     });
+                    this.setLineToken(this.$liff.getAccessToken());
+
+                    this.$router.push("/list");
+                }
+            })
+            .catch(err => {
+                // this.$route.push("/error");
+                console.log(err);
+            });
     },
     methods: {
         ...mapActions({
